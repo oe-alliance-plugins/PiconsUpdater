@@ -1,0 +1,18 @@
+{
+  "branch": "main",
+  "depends_recipe": "",
+  "description_control": "Download and install new Picons for your current bouquet channels. PiconsUpdater coded by svox and jbleyel, idea by arn354 and picons by mike99",
+  "description_recipe": "Download and install new Picons for your current bouquet channels. PiconsUpdater coded by svox and jbleyel, idea by arn354 and picons by mike99",
+  "history_source_dir": "PiconsUpdater",
+  "internal_package_name": "enigma2-plugin-extensions-piconsupdater",
+  "module_dir_name": "PiconsUpdater",
+  "output_subdir": "PiconsUpdater",
+  "package_name": "enigma2-plugin-extensions-piconsupdater",
+  "plugin_src_rel": "PiconsUpdater",
+  "python_package": "PiconsUpdater",
+  "rdepends_recipe": "python3-pillow python3-io python3-compression pngquant",
+  "replaces": "",
+  "repo_name": "PiconsUpdater",
+  "rrecommends": "",
+  "rreplaces": ""
+}
