@@ -7,6 +7,8 @@ from Components.Language import language
 from Components.config import config
 from Tools.Directories import resolveFilename, SCOPE_PLUGINS
 
+__version__ = "1.0"
+
 PLUGIN_PATH = resolveFilename(SCOPE_PLUGINS, "Extensions/PiconsUpdater")
 CONFIG_FILE = "https://raw.githubusercontent.com/gigablue-support-org/templates_PiconsUpdater/master/config.json"
 PluginLanguageDomain = "PiconsUpdater"
@@ -117,5 +119,3 @@ def getTmpLocalPicon(piconName):
 
 
 __all__ = ["_", "printToConsole", "getPiconsPath"]
-
-__version__ = "1.0"
