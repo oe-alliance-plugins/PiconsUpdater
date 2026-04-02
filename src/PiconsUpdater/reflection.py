@@ -39,6 +39,9 @@ def add_reflection(im, opacity=0.8):
 #   Returns the supplied PIL Image (im) with a reflection effect bgcolor  The background color of the reflection gradient amount.
 # The height of the reflection as a percentage of the orignal image opacity  The initial opacity of the reflection gradient
 # Originally written for the Photologue image management system for Django and Based on the original concept by Bernd Schlapsi
+	if im.mode != "RGBA":
+		im = im.convert("RGBA")
+
 	reflection = im.copy().transpose(Image.FLIP_TOP_BOTTOM)
 	background = Image.new("RGBA", im.size)
 	start = int(255 - 255 * opacity)

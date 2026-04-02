@@ -96,7 +96,10 @@ class MergePiconJob:
 		picon = picon.resize((scaleWidth, scaleHeight), Image.LANCZOS)
 		centerPoint = ((backgroundWidth - scaleWidth) // 2, (backgroundHeight - scaleHeight) // 2)
 		if config.plugins.PiconsUpdater.mirror_effect.getValue():
-			picon = add_reflection(picon)
+			try:
+				picon = add_reflection(picon)
+			except Exception as err:
+				printToConsole(f"Error: add_reflection: {err} '{channelPicon}'")
 		try:
 			background.paste(picon, centerPoint, picon)
 			if self.fgPath is not None:
