@@ -71,9 +71,9 @@ class DownloadJob:
 
 	def __downloadFailed(self, errorMessage=""):
 		self.errorMessage = errorMessage
-#		if errorMessage == "" and failureInstance is not None:
-#			self.errorMessage = failureInstance.getErrorMessage()
-#		self.errorMessage = f"{self.downloadUrl} - {self.errorMessage}"
+# if errorMessage == "" and failureInstance is not None:
+# self.errorMessage = failureInstance.getErrorMessage()
+# self.errorMessage = f"{self.downloadUrl} - {self.errorMessage}"
 		if self.callbackFailed is not None:
 			callback = self.callbackFailed
 			self.clean()

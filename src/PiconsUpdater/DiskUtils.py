@@ -6,8 +6,8 @@ from unicodedata import normalize
 
 def getCleanFileName(value):
 #   Converts to lowercase, removes non-word characters (alphanumerics and underscores) and converts spaces to hyphens.
-#	Also strips leading and trailing whitespace. Function is from django
-#	https://github.com/django/django/blob/9108696a7553123f57c5d42f9c4a90cad44532f4/django/utils/text.py#L417
+# Also strips leading and trailing whitespace. Function is from django
+# https://github.com/django/django/blob/9108696a7553123f57c5d42f9c4a90cad44532f4/django/utils/text.py#L417
 	value = normalize("NFKD", value)
 	value = sub("[+]", "___plus___", value)
 	value = sub("[&]", "___and___", value)
@@ -17,8 +17,8 @@ def getCleanFileName(value):
 
 
 def getOldestFile(path, fileExtensions=None):
-#	get oldest file from folder
-#	fileExtensions as tuple. example: (".txt", ".png")
+# get oldest file from folder
+# fileExtensions as tuple. example: (".txt", ".png")
 	files = getFilesFromPath(path)
 	if not files:
 		return None
@@ -28,8 +28,8 @@ def getOldestFile(path, fileExtensions=None):
 
 
 def getFiles(path, fileExtensions=None):
-#	get file list as an array sorted by date. The oldest first
-#	fileExtensions as tuple. example: (".txt", ".png")
+# get file list as an array sorted by date. The oldest first
+# fileExtensions as tuple. example: (".txt", ".png")
 	files = getFilesFromPath(path)
 	if not files:
 		return None
@@ -43,7 +43,7 @@ def getFilesFromPath(path):
 
 
 def getFilesWithNameKey(path, excludedDirNames=None, excludeDirs=None):
-#	get recursive all files from given path
+# get recursive all files from given path
 	rs = {}
 	for dirPath, dirNames, fileNames in walk(path):
 		for fileName in fileNames:
@@ -108,7 +108,7 @@ def reachedLimit(path, limit):
 
 
 def __filterFileListByFileExtension(files, fileExtensions):
-#	fileExtensions as tuple. example: (".txt", ".png")
+# fileExtensions as tuple. example: (".txt", ".png")
 	if fileExtensions is not None:
 		files = list(filter(lambda s: s.lower().endswith(fileExtensions), files))
 	return files
