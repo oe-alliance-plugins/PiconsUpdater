@@ -5,14 +5,14 @@
 # All rights reserved.
 # Redistribution and use in source and binary forms, with or without modification,
 # are permitted provided that the following conditions are met:
-#	1. Redistributions of source code must retain the above copyright notice,
-#	   this list of conditions and the following disclaimer.
-#	2. Redistributions in binary form must reproduce the above copyright
-#	   notice, this list of conditions and the following disclaimer in the
-#	   documentation and/or other materials provided with the distribution.
-#	3. Neither the name of reflection.py nor the names of its contributors may be used
-#	   to endorse or promote products derived from this software without
-#	   specific prior written permission.
+# 1. Redistributions of source code must retain the above copyright notice,
+# this list of conditions and the following disclaimer.
+# 2. Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+# 3. Neither the name of reflection.py nor the names of its contributors may be used
+# to endorse or promote products derived from this software without
+# specific prior written permission.
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
 # ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
 # WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -37,8 +37,8 @@ except ImportError:
 
 def add_reflection(im, opacity=0.8):
 #   Returns the supplied PIL Image (im) with a reflection effect bgcolor  The background color of the reflection gradient amount.
-#	The height of the reflection as a percentage of the orignal image opacity  The initial opacity of the reflection gradient
-#	Originally written for the Photologue image management system for Django and Based on the original concept by Bernd Schlapsi
+# The height of the reflection as a percentage of the orignal image opacity  The initial opacity of the reflection gradient
+# Originally written for the Photologue image management system for Django and Based on the original concept by Bernd Schlapsi
 	reflection = im.copy().transpose(Image.FLIP_TOP_BOTTOM)
 	background = Image.new("RGBA", im.size)
 	start = int(255 - 255 * opacity)
