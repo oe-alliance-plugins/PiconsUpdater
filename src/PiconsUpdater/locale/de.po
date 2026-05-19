@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PiconsUpdater\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-17 09:16+0200\n"
+"POT-Creation-Date: 2026-04-08 10:12+0200\n"
 "PO-Revision-Date: 2014-03-14 22:23+0100\n"
 "Last-Translator: unknown\n"
 "Language-Team: unknown <unknown>\n"
@@ -14,45 +14,53 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-KeywordsList: _\n"
 
+#: ../PiconsUpdaterView.py:225
 msgid "Background Image not downloaded yet, please wait some seconds and try again."
 msgstr "Hintergrundbilder werden gerade heruntergeladen, bitte in ein paar Sekunden noch einmal probieren."
 
+#: ../PiconsUpdaterView.py:172
 msgid "Choose Picons"
 msgstr "Picons auswählen"
 
+#: ../PiconsUpdaterView.py:285
 msgid "Choose folder"
 msgstr "Verzeichnis auswählen"
 
+#: ../plugin.py:20
 msgid "Download Picons for your channellist (favourites)"
 msgstr "Picons downloaden für die Senderlisten (Favoriten)"
 
+#: ../PiconsUpdaterView.py:355
 #, python-format
 msgid "Downloading %d of %d Picons"
 msgstr "Downloading %d von %d Picons"
 
+#: ../PiconsUpdaterView.py:95
 msgid "Exclude IPTV"
 msgstr "IPTV ausschließen"
 
+#: ../PiconsUpdaterView.py:96
 msgid "Exclude Radio"
 msgstr "Radio ausschließen"
 
+#: ../Picon.py:58
 #, python-format
 msgid "Merge %d of %d Picons"
 msgstr "Installiert %d von %d Picons"
 
+#: ../Picon.py:29
 msgid "Merge Picons"
 msgstr "Picons werden installiert"
 
+#: ../PiconsUpdaterView.py:93
 msgid "Mirror Effect"
 msgstr "Spiegeleffekt"
 
-#, python-format
-msgid "Optimize %d of %d Picons"
-msgstr "Optimiert %d von %d Picons"
-
+#: ../Picon.py:123
 msgid "Optimize Picons Progress"
 msgstr "Picons werden optimiert"
 
+#: ../PiconsUpdaterView.py:387
 msgid ""
 "Optimize Picons file size?\n"
 "\n"
@@ -62,15 +70,19 @@ msgstr ""
 "\n"
 "Achtung! Die Optimierung ist unter umständen sehr langsam und verringert die Qualität!!"
 
+#: ../PiconsUpdaterView.py:87
 msgid "Picon Style"
 msgstr "Picon Stil"
 
+#: ../PiconsUpdaterView.py:94
 msgid "Picons Folder"
 msgstr "Picons Verzeichnis"
 
+#: ../PiconsUpdaterView.py:87
 msgid "Picons background/foreground image"
 msgstr "Picons Hintergrund-/Vordergrundbild"
 
+#: ../PiconsUpdaterView.py:94
 msgid ""
 "Picons folder\n"
 "\n"
@@ -80,9 +92,11 @@ msgstr ""
 "\n"
 "'Ok' drücken um Dateibrowser zu öffnen"
 
+#: ../PiconsUpdaterView.py:80
 msgid "Picons size"
 msgstr "Picons Größe"
 
+#: ../PiconsUpdaterView.py:368
 #, python-format
 msgid ""
 "Process Finished.\n"
@@ -93,9 +107,11 @@ msgstr ""
 "%s Picons heruntergeladen\n"
 "%s Picons nicht gefunden"
 
+#: ../PiconsUpdaterView.py:80
 msgid "Size"
 msgstr "Größe"
 
+#: ../PiconsUpdaterView.py:316
 #, python-format
 msgid ""
 "The directory %s is not writable.\n"

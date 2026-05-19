@@ -1,14 +1,14 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
+# This file is distributed under the same license as the PiconsUpdater package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: PiconsUpdater\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-03 14:49+0100\n"
+"POT-Creation-Date: 2026-04-08 10:12+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,69 +17,83 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
+#: ../PiconsUpdaterView.py:225
 msgid "Background Image not downloaded yet, please wait some seconds and try again."
 msgstr ""
 
+#: ../PiconsUpdaterView.py:172
 msgid "Choose Picons"
 msgstr ""
 
+#: ../PiconsUpdaterView.py:285
 msgid "Choose folder"
 msgstr ""
 
+#: ../plugin.py:20
 msgid "Download Picons for your channellist (favourites)"
 msgstr ""
 
+#: ../PiconsUpdaterView.py:355
 #, python-format
 msgid "Downloading %d of %d Picons"
 msgstr ""
 
+#: ../PiconsUpdaterView.py:95
 msgid "Exclude IPTV"
 msgstr ""
 
+#: ../PiconsUpdaterView.py:96
 msgid "Exclude Radio"
 msgstr ""
 
+#: ../Picon.py:58
 #, python-format
 msgid "Merge %d of %d Picons"
 msgstr ""
 
+#: ../Picon.py:29
 msgid "Merge Picons"
 msgstr ""
 
+#: ../PiconsUpdaterView.py:93
 msgid "Mirror Effect"
 msgstr ""
 
-#, python-format
-msgid "Optimize %d of %d Picons"
-msgstr ""
-
+#: ../Picon.py:123
 msgid "Optimize Picons Progress"
 msgstr ""
 
+#: ../PiconsUpdaterView.py:387
 msgid ""
 "Optimize Picons file size?\n"
 "\n"
 "Be aware, this function is maybe very slow and reduces the quality!!"
 msgstr ""
 
+#: ../PiconsUpdaterView.py:87
 msgid "Picon Style"
 msgstr ""
 
+#: ../PiconsUpdaterView.py:94
 msgid "Picons Folder"
 msgstr ""
 
+#: ../PiconsUpdaterView.py:87
 msgid "Picons background/foreground image"
 msgstr ""
 
+#: ../PiconsUpdaterView.py:94
 msgid ""
 "Picons folder\n"
 "\n"
 "Press 'Ok' to open path selection view"
 msgstr ""
 
+#: ../PiconsUpdaterView.py:80
 msgid "Picons size"
 msgstr ""
 
+#: ../PiconsUpdaterView.py:368
 #, python-format
 msgid ""
 "Process Finished.\n"
@@ -87,9 +101,11 @@ msgid ""
 "%s Picons not found"
 msgstr ""
 
+#: ../PiconsUpdaterView.py:80
 msgid "Size"
 msgstr ""
 
+#: ../PiconsUpdaterView.py:316
 #, python-format
 msgid ""
 "The directory %s is not writable.\n"

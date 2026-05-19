@@ -8,99 +8,119 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-11-03 07:55+0100\n"
+"POT-Creation-Date: 2026-04-08 10:12+0200\n"
 "PO-Revision-Date: 2022-11-04 18:42+0100\n"
+"Last-Translator: Massimo Pissarello <mapi68@gmail.com>\n"
 "Language-Team: Italian <>\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"Last-Translator: Massimo Pissarello <mapi68@gmail.com>\n"
 "X-Generator: Lokalize 22.08.2\n"
 
-msgid ""
-"Background Image not downloaded yet, please wait some seconds and try again."
-msgstr ""
-"Immagine di sfondo non ancora scaricata, attendere alcuni secondi e riprovare."
+#: ../PiconsUpdaterView.py:225
+msgid "Background Image not downloaded yet, please wait some seconds and try again."
+msgstr "Immagine di sfondo non ancora scaricata, attendere alcuni secondi e riprovare."
 
+#: ../PiconsUpdaterView.py:172
 msgid "Choose Picons"
 msgstr "Scegli Picon"
 
+#: ../PiconsUpdaterView.py:285
 msgid "Choose folder"
 msgstr "Scegli cartella"
 
+#: ../plugin.py:20
 msgid "Download Picons for your channellist (favourites)"
 msgstr "Scarica Picon per la tua lista canali (preferiti)"
 
+#: ../PiconsUpdaterView.py:355
 #, python-format
 msgid "Downloading %d of %d Picons"
 msgstr "Download di %d di %d Picon"
 
+#: ../PiconsUpdaterView.py:95
 msgid "Exclude IPTV"
 msgstr "Escludi IPTV"
 
+#: ../PiconsUpdaterView.py:96
 msgid "Exclude Radio"
 msgstr "Escludi Radio"
 
+#: ../Picon.py:58
 #, python-format
 msgid "Merge %d of %d Picons"
 msgstr "Unisci %d di %d Picon"
 
+#: ../Picon.py:29
 msgid "Merge Picons"
 msgstr "Unisci Picon"
 
+#: ../PiconsUpdaterView.py:93
 msgid "Mirror Effect"
 msgstr "Effetto specchio"
 
-#, python-format
-msgid "Optimize %d of %d Picons"
-msgstr "Ottimizza %d di %d Picon"
-
+#: ../Picon.py:123
 msgid "Optimize Picons Progress"
 msgstr "Avanzamento ottimizzazione Picon"
 
+#: ../PiconsUpdaterView.py:387
 msgid ""
 "Optimize Picons file size?\n"
 "\n"
 "Be aware, this function is maybe very slow and reduces the quality!!"
 msgstr ""
-"Ottimizzare la dimensione dei Picon?\n\nAttenzione, questa funzione è forse"
-" molto lenta e riduce la qualità!!"
+"Ottimizzare la dimensione dei Picon?\n"
+"\n"
+"Attenzione, questa funzione è forse molto lenta e riduce la qualità!!"
 
+#: ../PiconsUpdaterView.py:87
 msgid "Picon Style"
 msgstr "Stile Picon"
 
+#: ../PiconsUpdaterView.py:94
 msgid "Picons Folder"
 msgstr "Cartella Picon"
 
+#: ../PiconsUpdaterView.py:87
 msgid "Picons background/foreground image"
 msgstr "Picons immagine di sfondo/primo piano"
 
+#: ../PiconsUpdaterView.py:94
 msgid ""
 "Picons folder\n"
 "\n"
 "Press 'Ok' to open path selection view"
 msgstr ""
-"Cartella Picon\n\nPremi 'Ok' per aprire la vista di selezione del percorso"
+"Cartella Picon\n"
+"\n"
+"Premi 'Ok' per aprire la vista di selezione del percorso"
 
+#: ../PiconsUpdaterView.py:80
 msgid "Picons size"
 msgstr "Dimensioni Picon"
 
+#: ../PiconsUpdaterView.py:368
 #, python-format
 msgid ""
 "Process Finished.\n"
 "%s Picons downloaded\n"
 "%s Picons not found"
-msgstr "Processo terminato.\n%s Picon scaricati\n%s Picon non trovati"
+msgstr ""
+"Processo terminato.\n"
+"%s Picon scaricati\n"
+"%s Picon non trovati"
 
+#: ../PiconsUpdaterView.py:80
 msgid "Size"
 msgstr "Dimensioni"
 
+#: ../PiconsUpdaterView.py:316
 #, python-format
 msgid ""
 "The directory %s is not writable.\n"
 "Make sure you select a writable directory instead."
 msgstr ""
-"La cartella %s non è scrivibile.\nAssicurati di selezionare invece una"
-" directory scrivibile."
+"La cartella %s non è scrivibile.\n"
+"Assicurati di selezionare invece una directory scrivibile."
