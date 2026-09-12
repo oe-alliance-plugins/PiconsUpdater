@@ -93,7 +93,7 @@ class MergePiconJob:
 		piconWidth, piconHeight = picon.size
 		scaleWidth = int(piconWidth * self.factor)
 		scaleHeight = int(piconHeight * self.factor)
-		picon = picon.resize((scaleWidth, scaleHeight), Image.LANCZOS)
+		picon = picon.resize((scaleWidth, scaleHeight), Image.Resampling.LANCZOS)
 		centerPoint = ((backgroundWidth - scaleWidth) // 2, (backgroundHeight - scaleHeight) // 2)
 		if config.plugins.PiconsUpdater.mirror_effect.getValue():
 			try:
@@ -110,7 +110,7 @@ class MergePiconJob:
 			self.__runFinished()
 
 		if piconWidth != self.size[0] or piconHeight != self.size[1]:
-			background.thumbnail(self.size, Image.LANCZOS)
+			background.thumbnail(self.size, Image.Resampling.LANCZOS)
 		else:
 			background.thumbnail(self.size)
 		background.save(targetPicon)
