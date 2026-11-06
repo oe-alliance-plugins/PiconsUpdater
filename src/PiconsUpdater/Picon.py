@@ -1,17 +1,18 @@
-from _collections import deque
+from collections import deque
 from os.path import isfile
-from PIL import Image
 from subprocess import call
-from twisted.internet.reactor import callInThread
+from PIL import Image
+from twisted.internet.reactor import callLater
+from twisted.internet.threads import deferToThread
 
 from Components.config import config
 
+from . import _, getPiconsPath, getTmpLocalPicon, printToConsole
 from .BouquetParser import getChannelKey
-from .DiskUtils import getFiles, getCleanFileName
+from .DiskUtils import getCleanFileName, getFiles
 from .EventDispatcher import dispatchEvent
 from .JobProgressView import JobProgressView
 from .reflection import add_reflection
-from .import printToConsole, getPiconsPath, getTmpLocalPicon, _  # for localized messages
 
 MERGE_PICONS_FINISHED = "mergePiconsFinished"
 OPTIMIZE_PICONS_FINISHED = "optimizePiconsFinished"
@@ -26,7 +27,8 @@ class MergeVO:
 class MergePiconJob:
 	def __init__(self, session, serviceList, bgPath, fgPath, factor, size):
 		self.session = session
-		self.session.open(JobProgressView, _("Merge Picons"), msgBoxID="mergePicons")
+		self.aborted = False
+		self.progressDialog = self.session.open(JobProgressView, _("Merge Picons"), onAbort=self.onAbort, msgBoxID="mergePicons")
 		self.serviceList = serviceList
 		self.bgPath = bgPath
 		self.fgPath = fgPath
@@ -45,7 +47,10 @@ class MergePiconJob:
 
 		self.mergePiconsTotal = len(self.executionQueueList)
 		self.mergePiconsCount = 0
-		self.execQueue()
+		if self.executionQueueList:
+			self.execQueue()
+		else:
+			callLater(0, self.__runFinished, None)
 
 	def __del__(self):
 		del self.session
@@ -55,9 +60,9 @@ class MergePiconJob:
 			if len(self.executionQueueList) > 0:
 				self.mergePiconsCount += 1
 				progress = int(100 * (float(self.mergePiconsCount) / float(self.mergePiconsTotal)))
-				self.session.current_dialog.setProgress(progress, _('Merge %d of %d Picons') % (self.mergePiconsCount, self.mergePiconsTotal))
+				self.progressDialog.setProgress(progress, _("Merge %d of %d Picons") % (self.mergePiconsCount, self.mergePiconsTotal))
 				mergeData = self.executionQueueList.popleft()
-				callInThread(self.mergePicon, mergeData.channelPicon, mergeData.targetPicon)
+				deferToThread(self.mergePicon, mergeData.channelPicon, mergeData.targetPicon).addBoth(self.__runFinished)
 		except Exception as err:
 			self.__clearExecutionQueueList()
 			printToConsole(f"MergePicon execQueue exception:\n{err}")
@@ -65,7 +70,11 @@ class MergePiconJob:
 	def __clearExecutionQueueList(self):
 		self.executionQueueList = deque()
 
-	def __runFinished(self):
+	def __runFinished(self, result):
+		if self.aborted:
+			return
+		if result is not None:
+			printToConsole(f"Error merging picon: {result.getErrorMessage()}")
 		try:
 			if len(self.executionQueueList) > 0:
 				self.execQueue()
@@ -81,13 +90,13 @@ class MergePiconJob:
 			background = Image.open(self.bgPath)
 		except Exception:
 			printToConsole(f"Error: Background '{self.bgPath}' is corrupted!")
-			self.__runFinished()
+			return
 
 		try:
 			picon = Image.open(channelPicon)
 		except Exception:
 			printToConsole(f"Error: Picon '{channelPicon}' is corrupted!")
-			self.__runFinished()
+			return
 
 		backgroundWidth, backgroundHeight = background.size
 		piconWidth, piconHeight = picon.size
@@ -107,30 +116,33 @@ class MergePiconJob:
 				background.paste(foreground, None, foreground)
 		except Exception as err:
 			printToConsole(f"Error: ChannelPicon: {err} '{channelPicon}'")
-			self.__runFinished()
+			return
 
 		if piconWidth != self.size[0] or piconHeight != self.size[1]:
 			background.thumbnail(self.size, Image.Resampling.LANCZOS)
 		else:
 			background.thumbnail(self.size)
 		background.save(targetPicon)
-		self.__runFinished()
+
+	def onAbort(self):
+		self.aborted = True
+		self.executionQueueList.clear()
 
 
 class OptimizePiconsFileSize:
 	def __init__(self, session):
 		self.session = session
-		self.session.open(JobProgressView, _("Optimize Picons Progress"), onAbort=self.onAbort, msgBoxID="optimizePicons")
-		self.execCommand = ""
+		self.aborted = False
+		self.progressDialog = self.session.open(JobProgressView, _("Optimize Picons Progress"), onAbort=self.onAbort, msgBoxID="optimizePicons")
 		self.executionQueueList = deque()
 		piconsList = getFiles(getPiconsPath().getValue(), ".png")
 		if piconsList:
 			self.optimizePiconsTotal = len(piconsList)
 			self.optimizePiconsCount = 0
-			for piconFile in piconsList:
-				execCommand = f"pngquant --ext .png --speed 10 --force 128 {piconFile}"
-				self.executionQueueList.append(execCommand)
-		self.execQueue()
+			self.executionQueueList.extend(piconsList)
+			self.execQueue()
+		else:
+			callLater(0, self.__runFinished)
 
 	def __del__(self):
 		del self.session
@@ -140,9 +152,9 @@ class OptimizePiconsFileSize:
 			if len(self.executionQueueList) > 0:
 				self.optimizePiconsCount += 1
 				progress = int(100 * (float(self.optimizePiconsCount) / float(self.optimizePiconsTotal)))
-				self.session.current_dialog.setProgress(progress, _(f"Optimize {self.optimizePiconsCount} of {self.optimizePiconsTotal} Picons"))
-				self.execCommand = self.executionQueueList.popleft()
-				callInThread(self.optimizePicon)
+				self.progressDialog.setProgress(progress, _("Optimize %d of %d Picons") % (self.optimizePiconsCount, self.optimizePiconsTotal))
+				self.execCommand = ("/usr/bin/pngquant", "--ext", ".png", "--speed", "10", "--force", "128", self.executionQueueList.popleft())
+				deferToThread(self.optimizePicon).addBoth(self.__runFinished)
 		except Exception as err:
 			self.__clearExecutionQueueList()
 			printToConsole(f"OptimizePicons execQueue exception:\n{err}")
@@ -151,6 +163,10 @@ class OptimizePiconsFileSize:
 		self.executionQueueList = deque()
 
 	def __runFinished(self, retval=None):
+		if self.aborted:
+			return
+		if retval:
+			printToConsole(f"Error optimizing picon: {retval}")
 		try:
 			if len(self.executionQueueList) > 0:
 				self.execQueue()
@@ -162,12 +178,8 @@ class OptimizePiconsFileSize:
 			printToConsole(f"OptimizePicons runFinished exception:\n{err}")
 
 	def optimizePicon(self):
-		try:
-			call(self.execCommand, shell=True)
-			self.__runFinished()
-		except Exception as err:
-			printToConsole(f"Error: optimizePngFileSizes '{err}'")
+		return call(self.execCommand)
 
 	def onAbort(self):
+		self.aborted = True
 		self.__clearExecutionQueueList()
-		self.__runFinished()

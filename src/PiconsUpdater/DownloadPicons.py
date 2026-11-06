@@ -1,7 +1,9 @@
+from collections import deque
 from os import remove
 from os.path import isfile
-from _collections import deque
-from . import printToConsole, getPiconsPath, getTmpLocalPicon, PICON_TYPE_NAME
+from twisted.internet.reactor import callLater
+
+from . import PICON_TYPE_NAME, getPiconsPath, getTmpLocalPicon, printToConsole
 from .BouquetParser import getChannelKey
 from .DiskUtils import getCleanFileName
 from .DownloadJob import DownloadJob
@@ -22,9 +24,11 @@ class DownloadPicons:
 		self.downloadsFailed = 0
 		self.totalDownloads = 0
 		self.channelsNotFoundList = []
+		self.aborted = False
 		self.downloadPicons()
 
 	def abortDownload(self):
+		self.aborted = True
 		printToConsole("abortDownload")
 		self.queueDownloadList = deque()
 
@@ -57,8 +61,12 @@ class DownloadPicons:
 			concurrentDownloads = self.totalDownloads
 		for i in range(concurrentDownloads):
 			self.executeDownloadQueue()
+		if not concurrentDownloads:
+			callLater(0, self.executeDownloadQueue)
 
 	def executeDownloadQueue(self):
+		if self.aborted:
+			return
 		# print(f"executeDownloadQueue: {len(self.queueDownloadList)} FIN: {self.downloadsFinished} FAILED: {self.downloadsFailed} Total : {self.totalDownloads}")
 		if len(self.queueDownloadList) == 0 and self.downloadsFinished + self.downloadsFailed == self.totalDownloads:
 			printToConsole(f"downloadsFinished: {self.downloadsFinished}")
@@ -87,4 +95,5 @@ class DownloadPicons:
 		self.executeDownloadQueue()
 
 	def dispatchDownloadFinished(self):
-		dispatchEvent(DOWNLOAD_FINISHED, self.downloadsFinished + self.downloadsFailed)
+		if not self.aborted:
+			dispatchEvent(DOWNLOAD_FINISHED, self.downloadsFinished + self.downloadsFailed)

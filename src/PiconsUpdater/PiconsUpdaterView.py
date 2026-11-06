@@ -1,19 +1,21 @@
 from os import makedirs
-from os.path import isdir, isfile, basename
-from Screens.MessageBox import MessageBox
-from Screens.Screen import Screen
+from os.path import basename, isdir, isfile, join
+
 from Components.ActionMap import ActionMap
 from Components.config import config, configfile, getConfigListEntry
 from Components.ConfigList import ConfigListScreen
 from Components.Pixmap import Pixmap
-from . import _, printToConsole, getPiconsPath, getPiconsTypeValue, getCurrentPicon, getConfigSizeList, getConfigBackgroundList, getBackgroundList, getPiconUrls, BOUQUET_PATH, TMP_PICON_PATH, TMP_BG_PATH, TMP_FG_PATH, TMP_PREVIEW_IMAGE_PATH, PREVIEW_IMAGE_PATH
-from .DiskUtils import pathIsWriteable
-from .JobProgressView import JobProgressView
-from .DownloadPicons import DownloadPicons, DOWNLOAD_ALL_FINISHED, DOWNLOAD_FINISHED
-from .DownloadJob import DownloadJob
-from .EventDispatcher import addEventListener, removeEventListener
-from .Picon import MergePiconJob, OptimizePiconsFileSize, OPTIMIZE_PICONS_FINISHED, MERGE_PICONS_FINISHED
+from Screens.MessageBox import MessageBox
+from Screens.Screen import Screen
+
+from . import BOUQUET_PATH, PREVIEW_IMAGE_PATH, TMP_BG_PATH, TMP_FG_PATH, TMP_PICON_PATH, TMP_PREVIEW_IMAGE_PATH, _, getBackgroundList, getConfigBackgroundList, getConfigSizeList, getCurrentPicon, getPiconUrls, getPiconsPath, getPiconsTypeValue, printToConsole
 from .BouquetParser import BouquetParser
+from .DiskUtils import pathIsWriteable
+from .DownloadJob import DownloadJob
+from .DownloadPicons import DOWNLOAD_ALL_FINISHED, DOWNLOAD_FINISHED, DownloadPicons
+from .EventDispatcher import addEventListener, removeEventListener
+from .JobProgressView import JobProgressView
+from .Picon import MERGE_PICONS_FINISHED, MergePiconJob, OPTIMIZE_PICONS_FINISHED, OptimizePiconsFileSize
 
 
 class PiconsUpdaterView(ConfigListScreen, Screen):
@@ -224,17 +226,21 @@ class PiconsUpdaterView(ConfigListScreen, Screen):
 		if bgimagepath and self.getCurrentBackgroundList() is not None and isfile(bgimagepath) is False:
 			self.session.open(MessageBox, _("Background Image not downloaded yet, please wait some seconds and try again."), type=MessageBox.TYPE_INFO, timeout=10)
 			return
-		addEventListener(DOWNLOAD_ALL_FINISHED, self.__downloadAllFinished)
-		self.session.open(JobProgressView, "Download Progress", msgBoxID="startDownload")
-		self.totalDownloads = 1
 		piconUrl = self.getCurrentPiconUrl()
 		if piconUrl is not None:
+			tmpPiconsPath = join(TMP_PICON_PATH, getPiconsTypeValue())
+			makedirs(tmpPiconsPath, mode=0o755, exist_ok=True)
+			self.progressDialog = self.session.open(JobProgressView, "Download Progress", onAbort=self.cancelDownload, msgBoxID="startDownload")
+			addEventListener(DOWNLOAD_ALL_FINISHED, self.__downloadAllFinished)
 			addEventListener(DOWNLOAD_FINISHED, self.__downloadFinished)
-			tmpPiconsPath = f"{TMP_PICON_PATH}/{getPiconsTypeValue()}"
-			if isdir(tmpPiconsPath) is False:
-				makedirs(tmpPiconsPath, 493)
-			downloadPicons = DownloadPicons(self.serviceList, piconUrl, tmpPiconsPath, self.getCurrentPiconNameType())
-			self.totalDownloads = downloadPicons.totalDownloads
+			self.downloadJob = DownloadPicons(self.serviceList, piconUrl, tmpPiconsPath, self.getCurrentPiconNameType())
+
+	def cancelDownload(self):
+		if self.downloadJob is not None:
+			self.downloadJob.abortDownload()
+			self.downloadJob = None
+		removeEventListener(DOWNLOAD_FINISHED, self.__downloadFinished)
+		removeEventListener(DOWNLOAD_ALL_FINISHED, self.__downloadAllFinished)
 
 	def okClicked(self):
 		cur = self.getCurrent()
@@ -285,15 +291,21 @@ class PiconsUpdaterView(ConfigListScreen, Screen):
 		self.session.openWithCallback(self.__pathSelected, LocationBox, _("Choose folder"), minFree=100)
 
 	def __setPreviewImageDownloadFinished(self):
+		if "previewImage" not in self:
+			return
 		self.previewImageDownloadCount += 1
 		if self.previewImageDownloadCount is self.previewImagesToDownload:
 			self.showPreviewPicture()
 
 	def __setBackgroundImageDownloadFinished(self):
+		if "backgroundImage" not in self:
+			return
 		self.backgroundImageDownloadCount += 1
 		self.__checkDownloadDecorateImagesFinished()
 
 	def __setForegroundImageDownloadFinished(self):
+		if "foregroundImage" not in self:
+			return
 		self.foregroundImageDownloadCount += 1
 		self.__checkDownloadDecorateImagesFinished()
 
@@ -351,8 +363,9 @@ class PiconsUpdaterView(ConfigListScreen, Screen):
 		self.__setForegroundImageDownloadFinished()
 
 	def __downloadFinished(self, downloadsFinished):
-		progress = int(100 * (float(downloadsFinished) / float(self.totalDownloads)))
-		self.session.current_dialog.setProgress(progress, _("Downloading %d of %d Picons") % (downloadsFinished, self.totalDownloads))
+		total = self.downloadJob.totalDownloads
+		progress = 100 * downloadsFinished // total
+		self.progressDialog.setProgress(progress, _("Downloading %d of %d Picons") % (downloadsFinished, total))
 
 	def __downloadAllFinished(self, downloadPicons):
 		removeEventListener(DOWNLOAD_FINISHED, self.__downloadFinished)
@@ -367,21 +380,23 @@ class PiconsUpdaterView(ConfigListScreen, Screen):
 		channelsNotFoundFile.close()
 		self.finishedMessage = _("Process Finished.\n%s Picons downloaded\n%s Picons not found") % (str(downloadPicons.downloadsFinished), str(downloadPicons.downloadsFailed))
 		printToConsole(self.finishedMessage)
-		self.session.current_dialog.callback = self.__mergePicons
-		self.session.current_dialog.close(True)
+		self.downloadJob = None
+		self.progressDialog.callback = self.__mergePicons
+		self.progressDialog.close(True)
 
 	def __mergePicons(self, *args):
-		addEventListener(MERGE_PICONS_FINISHED, self.processFinished)
 		background = self.getCurrentBackground()
 		if background:
 			factor = background["factor"]
-			MergePiconJob(self.session, self.serviceList, self.getBackgroundImagePath(), self.getForegroundImagePath(), factor, self.getCurrentSize())
+			addEventListener(MERGE_PICONS_FINISHED, self.processFinished)
+			self.progressDialog = MergePiconJob(self.session, self.serviceList, self.getBackgroundImagePath(), self.getForegroundImagePath(), factor, self.getCurrentSize()).progressDialog
+			self.progressDialog.onClose.append(lambda: removeEventListener(MERGE_PICONS_FINISHED, self.processFinished))
 
 	def processFinished(self, *args):
 		printToConsole("merge finished")
 		removeEventListener(MERGE_PICONS_FINISHED, self.processFinished)
-		self.session.current_dialog.callback = self.showOptimizeFileSizeMessage
-		self.session.current_dialog.close(True)
+		self.progressDialog.callback = self.showOptimizeFileSizeMessage
+		self.progressDialog.close(True)
 
 	def showOptimizeFileSizeMessage(self, *args):
 		self.session.openWithCallback(self.__optimizeFileSizeWindowCallback, MessageBox, _("Optimize Picons file size?\n\nBe aware, this function is maybe very slow and reduces the quality!!"), MessageBox.TYPE_YESNO, default=False, timeout=10)
@@ -389,14 +404,15 @@ class PiconsUpdaterView(ConfigListScreen, Screen):
 	def __optimizeFileSizeWindowCallback(self, result):
 		if result:
 			addEventListener(OPTIMIZE_PICONS_FINISHED, self.__optimizePiconsFinished)
-			OptimizePiconsFileSize(self.session)
+			self.progressDialog = OptimizePiconsFileSize(self.session).progressDialog
+			self.progressDialog.onClose.append(lambda: removeEventListener(OPTIMIZE_PICONS_FINISHED, self.__optimizePiconsFinished))
 		else:
 			self.showFinishedMessage()
 
 	def __optimizePiconsFinished(self):
 		removeEventListener(OPTIMIZE_PICONS_FINISHED, self.__optimizePiconsFinished)
-		self.session.current_dialog.callback = self.showFinishedMessage
-		self.session.current_dialog.close(True)
+		self.progressDialog.callback = self.showFinishedMessage
+		self.progressDialog.close(True)
 
 	def showFinishedMessage(self, *args):
 		self.session.open(MessageBox, self.finishedMessage, type=MessageBox.TYPE_INFO, timeout=10)

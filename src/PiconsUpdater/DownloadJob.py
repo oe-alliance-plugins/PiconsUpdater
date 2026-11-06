@@ -1,6 +1,7 @@
-from os import path
-from requests import get, exceptions
-from twisted.internet.reactor import callInThread
+from os.path import isfile
+from requests import exceptions, get
+from twisted.internet.reactor import callFromThread, callInThread, callLater
+
 from . import printToConsole
 
 
@@ -23,11 +24,12 @@ class download:
 			response.raise_for_status()
 			with open(file, "wb") as f:
 				f.write(content)
-			success(file)
-		except exceptions.RequestException as err:
+		except (exceptions.RequestException, OSError) as err:
 			if fail is not None:
 				printToConsole(f"Error in module 'downloadPage': {err}")
-				fail(err)
+				callFromThread(fail, err)
+		else:
+			callFromThread(success, file)
 
 
 class DownloadJob:
@@ -37,8 +39,8 @@ class DownloadJob:
 		self.callbackFinished = callbackFinished
 		self.callbackFailed = callbackFailed
 		self.download = None
-		if override is False and path.isfile(self.targetFileName) is True:
-			callInThread(self.__downloadFromCache)
+		if not override and isfile(self.targetFileName):
+			callLater(0, self.__downloadFromCache)
 		else:
 			self.run()
 
